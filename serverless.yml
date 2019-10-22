@@ -1,0 +1,67 @@
+service: cmv-cmview-api
+
+plugins:
+  - serverless-offline
+  - serverless-plugin-split-stacks
+  - serverless-prune-plugin
+  - serverless-tag-cloud-watch-logs
+  - serverless-tag-api-gateway
+
+app: myapisls
+
+provider:
+  name: aws
+  apiKeys:
+    - ${opt:stage}-cmview-setup
+  tags:
+    project: "cmview"
+    env: ${opt:stage}
+    teste: "xxx"
+  stackTags: ${self:provider.tags}
+  timeout: 30
+  runtime: nodejs8.10
+  deploymentBucket:
+    name: cmv-api-cmview-deployments
+  deploymentPrefix: api
+  stage: dev
+  region: us-east-1
+  memorySize: 256
+  role: arn:aws:iam::056433018174:role/CMVLambdaExecution
+  environment:
+    SLS_ENV: ${opt:stage}
+    BUCKET_CERT_TEMPORARY: ${self:custom.bucketName}
+    BUCKET_CERT: cmv-cert-a1-upload
+    BUCKET_EXPORT_NFES: cmview-export-temporary
+
+custom:
+  bucketName: cmv-cert-a1-upload-temporary-${opt:stage}
+  apiGatewayTags: ${self:provider.tags}
+  cloudWatchLogsTags: ${self:provider.tags}
+  splitStacks:
+    perFunction: false
+    perType: true
+  prune:
+    automatic: true
+    number: 3
+
+functions:
+ 
+
+  customer-update:
+    handler: src/functions/customer/customer-update.handler
+    events:
+      - http:
+          path: api/customer/update
+          method: put
+          cors: true
+          authorizer: arn:aws:lambda:us-east-1:056433018174:function:cmv-users-${opt:stage}-authenticate
+
+
+  categorization-dash:
+    handler: src/functions/dash/categorization-dash.handler
+    events:
+      - http:
+          path: api/dash/categorization
+          method: get
+          cors: true
+          authorizer: arn:aws:lambda:us-east-1:056433018174:function:cmv-users-${opt:stage}-authenticate

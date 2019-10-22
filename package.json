@@ -1,0 +1,11 @@
+{
+  "name": "myexamples",
+  "version": "1.0.0",
+  "description": "examplos p/ ser utilizados",
+  "main": "index.js",
+  "scripts": {
+    "test": "index.js"
+  },
+  "author": "Luiz Vieira Beserra",
+  "license": "ISC"
+}
