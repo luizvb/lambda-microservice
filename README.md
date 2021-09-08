@@ -1,1 +1,0 @@
-# scaffold: lambda/serveless microservice
