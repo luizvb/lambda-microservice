@@ -1,1 +1,1 @@
-# templates/examples
+# scaffold: lambda/serveless microservice
